@@ -83,4 +83,33 @@ class RoleValidationTests {
                         .header("X-User-Role", "VENDEDOR"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void testDashboardEndpoint_WithoutRole_ShouldReturnForbidden() throws Exception {
+        mockMvc.perform(get("/api/dashboard/resumen"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("NO_ROLE"));
+    }
+
+    @Test
+    void testDashboardEndpoint_WithVendedorRole_ShouldReturnForbidden() throws Exception {
+        mockMvc.perform(get("/api/dashboard/resumen")
+                        .header("X-User-Role", "VENDEDOR"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("ACCESO_DENEGADO"));
+    }
+
+    @Test
+    void testDashboardEndpoint_WithAdminRole_ShouldPass() throws Exception {
+        mockMvc.perform(get("/api/dashboard/resumen")
+                        .header("X-User-Role", "ADMIN"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void testDashboardEndpoint_WithSupervisorRole_ShouldPass() throws Exception {
+        mockMvc.perform(get("/api/dashboard/resumen")
+                        .header("X-User-Role", "SUPERVISOR"))
+                .andExpect(status().isOk());
+    }
 }

@@ -60,6 +60,11 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        // Endpoints de dashboard - Estadísticas requieren ADMIN/SUPERVISOR
+        if (uri.startsWith("/api/dashboard/")) {
+            return true;
+        }
+
         // Endpoints de exportación de ventas - requieren ADMIN/SUPERVISOR
         if (uri.startsWith("/api/ventas/exportar/")) {
             return true;
