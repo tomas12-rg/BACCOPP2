@@ -57,9 +57,10 @@ class RoleValidationTests {
 
     @Test
     void testExportEndpoint_WithAdminRole_ShouldPass() throws Exception {
+        // Export endpoints return 204 (No Content) when there's no data to export
         mockMvc.perform(get("/api/ventas/exportar/pdf")
                         .header("X-User-Role", "ADMIN"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
