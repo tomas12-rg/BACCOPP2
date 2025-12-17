@@ -1,6 +1,5 @@
 package com.baccosoft.baccosoft.Configuracion;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -8,8 +7,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private RoleValidationInterceptor roleValidationInterceptor;
+    private final RoleValidationInterceptor roleValidationInterceptor;
+
+    public WebConfig(RoleValidationInterceptor roleValidationInterceptor) {
+        this.roleValidationInterceptor = roleValidationInterceptor;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

@@ -3,6 +3,8 @@ package com.baccosoft.baccosoft.Configuracion;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -12,6 +14,7 @@ import java.util.Map;
 @Component
 public class RoleValidationInterceptor implements HandlerInterceptor {
 
+    private static final Logger logger = LoggerFactory.getLogger(RoleValidationInterceptor.class);
     private static final String ROLE_HEADER = "X-User-Role";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -28,24 +31,24 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
         if (requiresAdminOrSupervisor(requestURI)) {
             String userRole = request.getHeader(ROLE_HEADER);
             
-            System.out.println("🔒 Validando acceso a: " + requestURI);
-            System.out.println("👤 Rol del usuario: " + userRole);
+            logger.info("🔒 Validando acceso a: {}", requestURI);
+            logger.info("👤 Rol del usuario: {}", userRole);
 
             // Si no hay rol en el header, denegar acceso
             if (userRole == null || userRole.trim().isEmpty()) {
-                System.err.println("❌ Acceso denegado - No se proporcionó rol");
+                logger.error("❌ Acceso denegado - No se proporcionó rol");
                 sendForbiddenResponse(response, "NO_ROLE", null);
                 return false;
             }
 
             // Validar que el rol sea ADMIN o SUPERVISOR
             if (!isAdminOrSupervisor(userRole)) {
-                System.err.println("❌ Acceso denegado - Rol insuficiente: " + userRole);
+                logger.error("❌ Acceso denegado - Rol insuficiente: {}", userRole);
                 sendForbiddenResponse(response, "ACCESO_DENEGADO", userRole);
                 return false;
             }
 
-            System.out.println("✅ Acceso permitido para rol: " + userRole);
+            logger.info("✅ Acceso permitido para rol: {}", userRole);
         }
 
         return true;
@@ -70,10 +73,8 @@ public class RoleValidationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // Endpoints de estadísticas (si existen en el futuro)
-        if (uri.startsWith("/api/ventas/estadisticas/")) {
-            return true;
-        }
+        // Nota: Agregar aquí otros endpoints de estadísticas en el futuro
+        // if (uri.startsWith("/api/ventas/estadisticas/")) return true;
 
         return false;
     }
